@@ -1,13 +1,12 @@
-'use strict'
+'use strict';
 
-const puppeteer = require('puppeteer')
-const fs = require('fs')
-const request = require('request')
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const request = require('request');
 
 
 
 function download(img, filename, callback) {
-    //const img = document.querySelector('img[id="conteudo_myImage1"]')
     request.head(img, function(err, res, body) {
       request(img)
       .pipe(fs.createWriteStream(img))
@@ -49,11 +48,11 @@ function download(img, filename, callback) {
         await page.focus('#conteudo_txtChaveAcesso')
         page.keyboard.type('3519 0321 4818 6100 0109 5900 0064 1034 7295 5248 0672')
         const img = document.querySelector('img[id="conteudo_myImage1"]')
-        console.log(img)
+       
+        
         
 
         await page.evaluate(async() => {
-            //const img = document.querySelector('img[id="conteudo_myImage1"]')
             console.log('img') 
             download(img), "teste.png", function(){
                 console.log('Deu Certo')
