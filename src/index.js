@@ -1,18 +1,21 @@
-'use strict';
+'use strict'
 
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const request = require('request');
+const puppeteer = require('puppeteer')
+const fs = require('fs').promises
+const request = require('request')
+const imageDownloader  = require('image-downloader')
+const https  = require('https')
 
 
 
-function download(img, filename, callback) {
-    request.head(img, function(err, res, body) {
-      request(img)
-      .pipe(fs.createWriteStream(img))
-      .on("close", callback)
-   });
-  }
+function downloadImg(img, callback) {
+        request.head(img, function(err, res, body) {
+        request(img)
+        .pipe(fs.createWriteStream(img))
+        .on("close", callback)
+    });
+    }
+
 
 (async () => {
     try {
@@ -22,6 +25,8 @@ function download(img, filename, callback) {
             executablePath: 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'
             
         });
+
+
 
         const page = await browser.newPage()
         page.on('requestfailed', (req, resp) => {
@@ -48,17 +53,15 @@ function download(img, filename, callback) {
         await page.focus('#conteudo_txtChaveAcesso')
         page.keyboard.type('3519 0321 4818 6100 0109 5900 0064 1034 7295 5248 0672')
         const img = document.querySelector('img[id="conteudo_myImage1"]')
-       
-        
+        console.log(img)
         
 
         await page.evaluate(async() => {
-            console.log('img') 
-            download(img), "teste.png", function(){
+            downloadImg(img), "test.png", function(){
                 console.log('Deu Certo')
             }
             
-           await request.head(img, async function(err, res, body) {
+           await request.head(img.get, async function(err, res, body) {
                 request(img)
                 .pipe(fs.createWriteStream('test.png'))
                 .on("close", () => {
@@ -67,18 +70,33 @@ function download(img, filename, callback) {
              });
             
         })
-        return true
-        await browser.close();
-        return redirects
-
-
-
+          console.log('teste 1 ')
+         downloadImg(img)
+   /*
+        const options = {
+            url: 'https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx',
+            dest: 'C:/Users/User/Documents/Projetos/puppeteer' 
+                      
+                    
+        }
+        
+        downloadImg.img(options)
+            .then(({ img, imageDownloader }) => {
+            console.log('Imagem salva ', img)
+            })
+        
+       */
     } catch (e) {
         console.log(e)
         return false
 
     }
 
+    return true
+    //await browser.close();
+    //return redirects
+
+    
 
 
 
