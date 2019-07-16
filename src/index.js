@@ -5,6 +5,7 @@ const fs = require('fs').promises
 const request = require('request')
 const imageDownloader  = require('image-downloader')
 const https  = require('https')
+const supportsColor = require('supports-color')
 
 
 
@@ -14,6 +15,7 @@ function downloadImg(img, callback) {
         .pipe(fs.createWriteStream(img))
         .on("close", callback)
     });
+    debugger
     }
 
 
@@ -26,7 +28,7 @@ function downloadImg(img, callback) {
             
         });
 
-
+debugger
 
         const page = await browser.newPage()
         page.on('requestfailed', (req, resp) => {
@@ -37,7 +39,10 @@ function downloadImg(img, callback) {
                     status: req.response() ? req.response().status() : 200
                 }
             }
+            
         });
+        
+debugger
 
         page.on('response', response => {
             let responseHeaders = response.headers()
@@ -45,23 +50,26 @@ function downloadImg(img, callback) {
                 url: response.request().url(),
                 status: response.status()
             }
-        });
+            return redirects
+        });  
 
-
+        debugger
+        
         let pageURL = 'https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx'
         await page.goto(pageURL)
         await page.focus('#conteudo_txtChaveAcesso')
         page.keyboard.type('3519 0321 4818 6100 0109 5900 0064 1034 7295 5248 0672')
         const img = document.querySelector('img[id="conteudo_myImage1"]')
         console.log(img)
-        
+
+debugger
 
         await page.evaluate(async() => {
-            downloadImg(img), "test.png", function(){
+            downloadImg.get(img), "test.png", function(){
                 console.log('Deu Certo')
             }
             
-           await request.head(img.get, async function(err, res, body) {
+           await request.head(img, async function(err, res, body) {
                 request(img)
                 .pipe(fs.createWriteStream('test.png'))
                 .on("close", () => {
@@ -70,33 +78,20 @@ function downloadImg(img, callback) {
              });
             
         })
+        debugger
           console.log('teste 1 ')
          downloadImg(img)
-   /*
-        const options = {
-            url: 'https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx',
-            dest: 'C:/Users/User/Documents/Projetos/puppeteer' 
-                      
-                    
-        }
-        
-        downloadImg.img(options)
-            .then(({ img, imageDownloader }) => {
-            console.log('Imagem salva ', img)
-            })
-        
-       */
+   
+   
     } catch (e) {
-        console.log(e)
+        console.error('error puppeteer')
         return false
 
     }
-
+    await browser.close()
     return true
-    //await browser.close();
-    //return redirects
+   
 
-    
 
 
 
